@@ -10,6 +10,9 @@ data class ResponseUser(
     @SerializedName("login")
     val login: String? = null,
 
+    @SerializedName("avatar_url")
+    val avatar_url: String? = null,
+
     @SerializedName("site_admin")
     val site_admin: Boolean? = null
 )

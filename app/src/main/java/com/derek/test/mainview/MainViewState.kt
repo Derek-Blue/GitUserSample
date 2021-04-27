@@ -1,4 +1,4 @@
-package com.derek.test
+package com.derek.test.mainview
 
 data class MainViewState(
     val showItems: List<UserData> = emptyList(),

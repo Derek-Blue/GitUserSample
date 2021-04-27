@@ -15,12 +15,13 @@ import retrofit2.create
 import java.util.concurrent.TimeUnit
 
 private val OkHttpClientBase = named("okHttpClientBase")
+private val gson = named("gson")
 
 val appModule = module {
-    single { createGson() }
+    single(gson) { createGson() }
     single(OkHttpClientBase) { createOkHttpClientBase() }
     single { createOkHttpClientWithTimeout(get(OkHttpClientBase), TimeUnit.SECONDS.toMillis(60)) }
-    single { provideGitUserService(provideGitRetrofit(get(), get())) }
+    factory { provideGitUserService(provideGitRetrofit(get(), get(gson))) }
 }
 
 private fun provideGitUserService(retrofit: Retrofit): GitUserService = retrofit.create()

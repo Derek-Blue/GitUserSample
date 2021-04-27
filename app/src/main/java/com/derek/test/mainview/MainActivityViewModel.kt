@@ -1,4 +1,4 @@
-package com.derek.test
+package com.derek.test.mainview
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,7 +12,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 
 class MainActivityViewModel(
     private val userListUseCase: UserListUseCase
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableLiveData(MainViewState())
     private val currentState get() = _state.value!!
@@ -38,7 +38,7 @@ class MainActivityViewModel(
             .subscribeOn(Schedulers.io())
             .map {
                 val showItems = it.map { useCase ->
-                    UserData(useCase.id, useCase.login, useCase.site_admin)
+                    UserData(useCase.id, useCase.login, useCase.avatar_url, useCase.site_admin)
                 }
                 val lastUserId = it.last().id
                 currentState.copy(
@@ -64,12 +64,12 @@ class MainActivityViewModel(
         }
         userListUseCase.fetchMore(currentState.lastUserId)
             .map {
-                val showItems = it.map { useCase ->
-                    UserData(useCase.id, useCase.login, useCase.site_admin)
+                val newItems = currentState.showItems + it.map { useCase ->
+                    UserData(useCase.id, useCase.login, useCase.avatar_url, useCase.site_admin)
                 }
                 val lastUserId = it.last().id
                 currentState.copy(
-                    showItems = showItems,
+                    showItems = newItems,
                     lastUserId = lastUserId
                 )
             }

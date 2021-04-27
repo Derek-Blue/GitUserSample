@@ -19,6 +19,7 @@ class UserListRepositoryImpl(
                     UserRepositoryData(
                         it.id ?: return@mapNotNull null,
                         it.login ?: WHEN_EMPTY_LOGIN,
+                        it.avatar_url ?: "",
                         it.site_admin ?: false
                     )
                 }

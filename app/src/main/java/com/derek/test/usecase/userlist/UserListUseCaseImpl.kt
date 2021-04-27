@@ -12,7 +12,7 @@ class UserListUseCaseImpl(
             .map { repositoryData ->
                 repositoryData.map {
                     UserUseCaseData(
-                        it.id, it.login, it.site_admin
+                        it.id, it.login, it.avatar_url, it.site_admin
                     )
                 }
             }
@@ -23,7 +23,7 @@ class UserListUseCaseImpl(
             .map { repositoryData ->
                 repositoryData.map {
                     UserUseCaseData(
-                        it.id, it.login, it.site_admin
+                        it.id, it.login, it.avatar_url, it.site_admin
                     )
                 }
             }
