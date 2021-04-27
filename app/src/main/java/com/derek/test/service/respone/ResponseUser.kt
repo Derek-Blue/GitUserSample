@@ -12,14 +12,4 @@ data class ResponseUser(
 
     @SerializedName("site_admin")
     val site_admin: Boolean? = null
-//
-//    User details:
-//    ● avatar_url
-//    ● login
-//    ● site_admin (badge)
-//● Number of items
-//● Paginated (optional)
-//● start with since=0, page size = 20
-//● Non-paginated
-//● Limit to 100 users
 )

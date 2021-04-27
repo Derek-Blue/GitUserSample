@@ -2,11 +2,12 @@ package com.derek.test
 
 import android.app.Application
 import com.derek.test.di.appModule
+import com.derek.test.di.useCaseModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
-class GitUserApplication: Application() {
+class GitUserApplication : Application() {
 
     companion object {
         lateinit var instance: GitUserApplication
@@ -19,9 +20,12 @@ class GitUserApplication: Application() {
         startKoin {
             androidLogger()
             androidContext(this@GitUserApplication)
-            modules(listOf(
-                appModule
-            ))
+            modules(
+                listOf(
+                    appModule,
+                    useCaseModule
+                )
+            )
         }
     }
 }
