@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.derek.test.databinding.ActivityMainBinding
 import com.derek.test.mainview.MainActivityViewModel
 import com.derek.test.mainview.UserListAdapter
+import com.derek.test.mainview.detail.UserDetailsActivity
+import com.derek.test.repository.userlist.UserListRepositoryImpl.Companion.EMPTY_LOGIN
 import com.derek.test.untils.EndlessRecyclerViewScrollListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -21,7 +23,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private val userListAdapter by lazy {
-        UserListAdapter()
+        UserListAdapter { data ->
+            if (data.login != EMPTY_LOGIN) {
+                val intent = UserDetailsActivity.newIntent(this, data.login)
+                startActivity(intent)
+            }
+        }
     }
 
     private val viewModel by viewModel<MainActivityViewModel>()
