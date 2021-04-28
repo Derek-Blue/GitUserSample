@@ -1,4 +1,4 @@
-package com.derek.test
+package com.derek.test.mainview
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -6,9 +6,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.derek.test.R
 import com.derek.test.databinding.ActivityMainBinding
-import com.derek.test.mainview.MainActivityViewModel
-import com.derek.test.mainview.UserListAdapter
 import com.derek.test.mainview.detail.UserDetailsActivity
 import com.derek.test.repository.userlist.UserListRepositoryImpl.Companion.EMPTY_LOGIN
 import com.derek.test.untils.EndlessRecyclerViewScrollListener
@@ -51,7 +50,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     /**
-     * 觀察 Live Data
+     * observer Live Data
      */
     private fun observer() {
         viewModel.state.map {
