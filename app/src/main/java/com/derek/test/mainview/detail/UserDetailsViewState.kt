@@ -7,5 +7,6 @@ data class UserDetailsViewState(
     val login: String = "",
     val site_admin: Boolean = false,
     val location: String = "",
-    val blog: String = ""
+    val blog: String = "",
+    val errorMessage: String = ""
 )

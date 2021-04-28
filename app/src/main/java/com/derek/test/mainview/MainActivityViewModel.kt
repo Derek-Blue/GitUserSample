@@ -1,8 +1,10 @@
 package com.derek.test.mainview
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.derek.test.untils.WorkingState
 import com.derek.test.usecase.userlist.UserListUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -47,9 +49,14 @@ class MainActivityViewModel(
                 )
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy {
-                _state.value = it
+            .doOnSubscribe {
+                _state.value = currentState.copy(workingState = WorkingState.Loading)
             }
+            .subscribeBy ({
+                _state.value = currentState.copy(workingState = WorkingState.Error(it.message ?: "ERROR"))
+            },{
+                _state.value = it.copy(workingState = WorkingState.Finished)
+            })
             .addTo(disposables)
     }
 
@@ -74,9 +81,11 @@ class MainActivityViewModel(
                 )
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy {
+            .subscribeBy ({
+                Log.e("TAG", "error", it)
+            },{
                 _state.value = it
-            }
+            })
             .addTo(fetchNewDataDisposables)
     }
 

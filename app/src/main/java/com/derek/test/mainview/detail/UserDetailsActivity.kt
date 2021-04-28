@@ -3,6 +3,7 @@ package com.derek.test.mainview.detail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -68,6 +69,10 @@ class UserDetailsActivity : AppCompatActivity(R.layout.activity_user_details) {
                 binding.locationTextView.text = it.location
 
                 binding.blogTextView.text = it.blog
+
+                if (it.errorMessage.isNotEmpty()) {
+                    Toast.makeText(this, it.errorMessage, Toast.LENGTH_SHORT).show()
+                }
             })
     }
 }

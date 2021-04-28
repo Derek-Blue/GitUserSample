@@ -42,9 +42,13 @@ class UserDetailsViewModel(
                 )
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy {
+            .subscribeBy ({
+                _state.value = currentState.copy(
+                    errorMessage = it.message ?: "ERROR"
+                )
+            },{
                 _state.value = it
-            }
+            })
             .addTo(disposables)
     }
 
