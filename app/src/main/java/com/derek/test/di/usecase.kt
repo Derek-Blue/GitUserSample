@@ -9,6 +9,8 @@ import com.derek.test.usecase.userlist.UserListUseCaseImpl
 import org.koin.dsl.module
 
 val useCaseModule = module {
+
     factory<UserListUseCase> { UserListUseCaseImpl(UserListRepositoryImpl(get())) }
+
     factory<UserDetailsUseCase> { UserDetailsUseCaseImpl(UserDetailsRepositoryImpl(get())) }
 }
