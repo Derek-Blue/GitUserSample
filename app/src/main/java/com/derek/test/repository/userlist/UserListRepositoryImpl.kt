@@ -9,7 +9,7 @@ class UserListRepositoryImpl(
 
     companion object {
         private const val DEFAULT_TAKE_COUNT = 20
-        private const val WHEN_EMPTY_LOGIN = "unKnow"
+        const val EMPTY_LOGIN = "unKnow"
     }
 
     override fun getData(since: Int): Single<List<UserRepositoryData>> {
@@ -18,7 +18,7 @@ class UserListRepositoryImpl(
                 response.mapNotNull {
                     UserRepositoryData(
                         it.id ?: return@mapNotNull null,
-                        it.login ?: WHEN_EMPTY_LOGIN,
+                        it.login ?: EMPTY_LOGIN,
                         it.avatar_url ?: "",
                         it.site_admin ?: false
                     )

@@ -1,8 +1,10 @@
 package com.derek.test.service
 
 import com.derek.test.service.respone.ResponseUser
+import com.derek.test.service.respone.ResponseUserDetails
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GitUserService {
@@ -18,4 +20,14 @@ interface GitUserService {
         @Query("since")since: Int,
         @Query("per_page")perPage: Int
     ): Single<List<ResponseUser>>
+
+    /**
+     * 取得指定user details
+     *
+     * @param username 指定的user
+     */
+    @GET("users/{username}")
+    fun getUserDetails(
+        @Path("username")username: String
+    ): Single<ResponseUserDetails>
 }
