@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.derek.test.R
 import com.derek.test.databinding.ActivityMainBinding
-import com.derek.test.mainview.detail.UserDetailsPagerActivity
+import com.derek.test.userdetails.UserDetailsPagerActivity
 import com.derek.test.repository.userlist.UserListRepositoryImpl.Companion.EMPTY_LOGIN
 import com.derek.test.untils.EndlessRecyclerViewScrollListener
 import com.derek.test.untils.WorkingState

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 private val OkHttpClientBase = named("okHttpClientBase")
 private val gson = named("gson")
 
-val appModule = module {
+val mainModule = module {
     single(gson) { createGson() }
     single(OkHttpClientBase) { createOkHttpClientBase() }
     single { createOkHttpClientWithTimeout(get(OkHttpClientBase), TimeUnit.SECONDS.toMillis(60)) }

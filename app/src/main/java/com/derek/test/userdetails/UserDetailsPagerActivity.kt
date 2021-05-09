@@ -1,4 +1,4 @@
-package com.derek.test.mainview.detail
+package com.derek.test.userdetails
 
 import android.content.Context
 import android.content.Intent
