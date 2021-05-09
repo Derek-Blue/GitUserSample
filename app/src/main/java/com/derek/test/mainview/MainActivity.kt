@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.derek.test.R
 import com.derek.test.databinding.ActivityMainBinding
-import com.derek.test.mainview.detail.UserDetailsActivity
+import com.derek.test.mainview.detail.UserDetailsPagerActivity
 import com.derek.test.repository.userlist.UserListRepositoryImpl.Companion.EMPTY_LOGIN
 import com.derek.test.untils.EndlessRecyclerViewScrollListener
 import com.derek.test.untils.WorkingState
@@ -25,8 +25,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private val userListAdapter by lazy {
         UserListAdapter { data ->
+            val logins = (binding.userListRecyclerView.adapter as UserListAdapter).currentList.map {
+                it.login
+            }
+            val position = logins.indexOf(data.login)
             if (data.login != EMPTY_LOGIN) {
-                val intent = UserDetailsActivity.newIntent(this, data.login)
+                val intent = UserDetailsPagerActivity.newIntent(this, logins, position)
                 startActivity(intent)
             }
         }
