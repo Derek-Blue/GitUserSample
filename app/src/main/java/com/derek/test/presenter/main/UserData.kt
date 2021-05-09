@@ -1,6 +1,6 @@
-package com.derek.test.usecase.userlist
+package com.derek.test.presenter.main
 
-data class UserUseCaseData(
+data class UserData(
     val id: Int,
     val login: String,
     val avatar_url: String,

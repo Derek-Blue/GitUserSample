@@ -1,4 +1,4 @@
-package com.derek.test.userdetails
+package com.derek.test.view.userdetails
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity

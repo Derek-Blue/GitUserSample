@@ -1,9 +1,10 @@
-package com.derek.test.mainview
+package com.derek.test.view.mainview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.derek.test.R
+import com.derek.test.presenter.main.UserData
 
 class UserListAdapter(
     private val onItemClickListener: (data: UserData) -> Unit

@@ -1,7 +1,7 @@
 package com.derek.test.presenter.userdetails
 
 import com.derek.test.interactor.UserDetailsInteractor
-import com.derek.test.userdetails.IUserDetailsView
+import com.derek.test.view.userdetails.IUserDetailsView
 
 class UserDetailsPresenter(
     private val view: IUserDetailsView,
