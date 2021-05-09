@@ -21,7 +21,7 @@
         </activity>
 
         <activity
-            android:name=".mainview.detail.UserDetailsActivity"
+            android:name=".mainview.detail.UserDetailsPagerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GitUserSample" />
 
