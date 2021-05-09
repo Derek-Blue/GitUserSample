@@ -14,3 +14,11 @@ kotlin程式語言撰寫
 
 使用koin注入工具MVVM架構
 
+## History
+
+###### VersionName 1.1.1
+
+* 使用者詳細頁改為可翻頁式
+
+* 新增UseCase UnitTest
+
