@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GitUserSample">
-        <activity android:name=".mainview.MainActivity">
+        <activity android:name="com.derek.test.view.mainview.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,7 +21,7 @@
         </activity>
 
         <activity
-            android:name=".mainview.detail.UserDetailsPagerActivity"
+            android:name="com.derek.test.view.userdetails.UserDetailsPagerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GitUserSample" />
 
