@@ -22,3 +22,6 @@ kotlin程式語言撰寫
 
 * 新增UseCase UnitTest
 
+###### VersionName 1.2.0
+
+* 重構為MVP架構 並增加測試
