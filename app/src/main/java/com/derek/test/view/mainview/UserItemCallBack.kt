@@ -1,6 +1,7 @@
-package com.derek.test.mainview
+package com.derek.test.view.mainview
 
 import androidx.recyclerview.widget.DiffUtil
+import com.derek.test.presenter.main.UserData
 
 class UserItemCallBack: DiffUtil.ItemCallback<UserData>() {
 
