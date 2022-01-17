@@ -1,37 +1,38 @@
 package com.derek.test.presenter.main
 
-import com.derek.test.interactor.UserListInteractor
-import com.derek.test.view.mainview.IMainView
+import com.derek.test.presenter.contract.UserListContract
+import com.derek.test.repository.userlist.UserListRepository
+import com.derek.test.repository.userlist.UserRepositoryData
 
+/**
+ * 實作 Contract Presenter
+ * 跟 Repository 取得資料後透過 Contract View 通知畫面
+ */
 class UserListPresenter(
-    private val view: IMainView,
-    private val interactor: UserListInteractor
-): UserListInteractor.OnFinishListener {
+    private val view: UserListContract.UserListView,
+    private val repository: UserListRepository
+) : UserListContract.UserListPresenter {
 
     private var currentId = 0
 
     private var currentList = emptyList<UserData>()
 
-    fun fetchData() {
-        if (currentList.size < 100) {
-            interactor.fetchData(currentId, this)
-            view.showProgress()
-        }
-    }
+    override suspend fun getData() {
+        view.onProgress(true)
+        repository.getData(currentId, object : UserListRepository.GetUserListCallBack {
+            override fun onResult(data: List<UserRepositoryData>) {
+                val result = data.map {
+                    UserData(
+                        it.id, it.login, it.avatar_url, it.site_admin
+                    )
+                }
 
-    override fun onSuccess(data: List<UserData>) {
-        currentList = currentList + data
-        view.setUserListData(currentList)
-        currentId = data.last().id
-        view.hideProgress()
-    }
+                currentId = result.lastOrNull()?.id ?: 0
+                currentList = result + currentList
 
-    override fun onFail(error: String) {
-        view.showError(error)
-        view.hideProgress()
-    }
-
-    fun onDestroy() {
-        interactor.onDestroy()
+                view.onGetResult(currentList)
+                view.onProgress(false)
+            }
+        })
     }
 }

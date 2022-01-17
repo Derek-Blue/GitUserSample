@@ -29,6 +29,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs = ["-Xallow-result-return-type"]
     }
 
     buildFeatures {
@@ -47,6 +48,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    // coroutine
+    def coroutinesVersion = "1.5.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+
     def okhttpVersion = "4.8.1"
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
 
@@ -57,21 +62,21 @@ dependencies {
     testImplementation "com.squareup.okhttp3:mockwebserver:$okhttpVersion"
 
     //truth
-    testImplementation "com.google.truth:truth:1.0.1"
-    testImplementation "com.google.truth.extensions:truth-java8-extension:1.0.1"
+    testImplementation "com.google.truth:truth:1.1.2"
+    testImplementation "com.google.truth.extensions:truth-java8-extension:1.1.2"
     testImplementation 'org.assertj:assertj-core:3.17.2'
 
-    def recyclerViewVersion = "1.1.0"
+    def recyclerViewVersion = "1.2.1"
     implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
     implementation "androidx.recyclerview:recyclerview-selection:$recyclerViewVersion"
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation "com.google.android.material:material:1.3.0"
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.3.1"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
-    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.3.1"
+    implementation "com.google.android.material:material:1.5.0"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.4.0"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.4.0"
     implementation 'androidx.preference:preference-ktx:1.1.1'
 
     def retrofitVersion = "2.9.0"
