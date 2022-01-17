@@ -1,7 +1,8 @@
 package com.derek.test.repository.userlist
 
 import com.derek.test.service.GitUserService
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class UserListRepositoryImpl(
     private val gitUserService: GitUserService
@@ -12,10 +13,12 @@ class UserListRepositoryImpl(
         const val EMPTY_LOGIN = "unKnow"
     }
 
-    override fun getData(since: Int): Single<List<UserRepositoryData>> {
-        return gitUserService.getUsersList(since, DEFAULT_TAKE_COUNT)
-            .map { response ->
-                response.mapNotNull {
+    override suspend fun getData(since: Int, callback: UserListRepository.GetUserListCallBack) {
+        withContext(Dispatchers.Default) {
+            val body = gitUserService.getUsersList(since, DEFAULT_TAKE_COUNT).body()
+
+            body?.let { response ->
+                val repositoryData = response.mapNotNull {
                     UserRepositoryData(
                         it.id ?: return@mapNotNull null,
                         it.login ?: EMPTY_LOGIN,
@@ -23,6 +26,8 @@ class UserListRepositoryImpl(
                         it.site_admin ?: false
                     )
                 }
+                callback.onResult(repositoryData)
             }
+        }
     }
 }

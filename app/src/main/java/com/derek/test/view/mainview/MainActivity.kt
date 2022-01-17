@@ -3,26 +3,31 @@ package com.derek.test.view.mainview
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.derek.test.R
 import com.derek.test.databinding.ActivityMainBinding
+import com.derek.test.presenter.contract.UserListContract
 import com.derek.test.presenter.main.UserData
 import com.derek.test.presenter.main.UserListPresenter
-import com.derek.test.view.userdetails.UserDetailsPagerActivity
+import com.derek.test.repository.userlist.UserListRepository
 import com.derek.test.repository.userlist.UserListRepositoryImpl.Companion.EMPTY_LOGIN
 import com.derek.test.untils.EndlessRecyclerViewScrollListener
+import com.derek.test.view.userdetails.UserDetailsPagerActivity
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
-class MainActivity : AppCompatActivity(R.layout.activity_main), IMainView {
+/**
+ * 實作Contract View
+ */
+class MainActivity : AppCompatActivity(R.layout.activity_main), UserListContract.UserListView {
 
     private lateinit var binding: ActivityMainBinding
-
     private val linearLayoutManager by lazy {
         LinearLayoutManager(this)
     }
-
     private val userListAdapter by lazy {
         UserListAdapter { data ->
             val logins = (binding.userListRecyclerView.adapter as UserListAdapter).currentList.map {
@@ -36,8 +41,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), IMainView {
         }
     }
 
-    private val presenter by inject<UserListPresenter> {
-        parametersOf(this)
+    private val repository by inject<UserListRepository>()
+
+    private val presenter by lazy {
+        UserListPresenter(this, repository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,39 +52,30 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), IMainView {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        presenter.fetchData()
+        fetchData()
         binding.userListRecyclerView.apply {
             layoutManager = linearLayoutManager
             adapter = userListAdapter
             addOnScrollListener(object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
                 override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                    presenter.fetchData()
+                    fetchData()
                 }
             })
         }
     }
 
-    override fun onDestroy() {
-        presenter.onDestroy()
-        super.onDestroy()
+    private fun fetchData() {
+        lifecycleScope.launch {
+            presenter.getData()
+        }
     }
 
-    override fun setUserListData(data: List<UserData>) {
+    override fun onGetResult(data: List<UserData>) {
         userListAdapter.submitList(data)
     }
 
-    override fun showError(error: String) {
-        binding.userListRecyclerView.isVisible = false
-        binding.errorTextView.isVisible = true
-        binding.errorTextView.text = error
-    }
-
-    override fun showProgress() {
-        binding.progressBar.isVisible = true
-    }
-
-    override fun hideProgress() {
-        binding.progressBar.isVisible = false
+    override fun onProgress(showProgress: Boolean) {
+        binding.progressBar.isVisible = showProgress
     }
 
 }
