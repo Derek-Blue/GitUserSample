@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         observer()
+        val R = 123
 
         binding.userListRecyclerView.apply {
             layoutManager = linearLayoutManager
