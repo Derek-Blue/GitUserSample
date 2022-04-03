@@ -5,12 +5,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.*
 import com.bumptech.glide.Glide
 import com.derek.test.R
 import com.derek.test.databinding.FragmentUserDetailsBinding
 import com.derek.test.repository.userlist.UserListRepositoryImpl.Companion.EMPTY_LOGIN
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -40,10 +41,7 @@ class UserDetailsFragment : Fragment(R.layout.fragment_user_details) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         _binding = FragmentUserDetailsBinding.bind(view)
-    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
         observerViewState()
     }
 
@@ -51,26 +49,36 @@ class UserDetailsFragment : Fragment(R.layout.fragment_user_details) {
      * observer Live Data
      */
     private fun observerViewState() {
-        viewModel.state
-            .distinctUntilChanged()
-            .observe(viewLifecycleOwner, Observer {
-                binding.locationConstrainLayout.isVisible = it.location.isNotBlank()
-                binding.blogConstrainLayout.isVisible = it.blog.isNotBlank()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.state
+                        .collectLatest {
+                            binding.locationConstrainLayout.isVisible = it.location.isNotBlank()
+                            binding.blogConstrainLayout.isVisible = it.blog.isNotBlank()
 
-                Glide.with(this).load(it.avatar_url).into(binding.userImageView)
-                binding.nameTextView.text = it.name
-                binding.bioTextView.text = it.bio
+                            Glide.with(this@UserDetailsFragment).load(it.avatar_url)
+                                .into(binding.userImageView)
+                            binding.nameTextView.text = it.name
+                            binding.bioTextView.text = it.bio
 
-                binding.loginTextView.text = it.login
-                binding.badgeTextView.isVisible = it.site_admin
+                            binding.loginTextView.text = it.login
+                            binding.badgeTextView.isVisible = it.site_admin
 
-                binding.locationTextView.text = it.location
+                            binding.locationTextView.text = it.location
 
-                binding.blogTextView.text = it.blog
+                            binding.blogTextView.text = it.blog
 
-                if (it.errorMessage.isNotEmpty()) {
-                    Toast.makeText(requireContext(), it.errorMessage, Toast.LENGTH_SHORT).show()
+                            if (it.errorMessage.isNotEmpty()) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    it.errorMessage,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                 }
-            })
+            }
+        }
     }
 }

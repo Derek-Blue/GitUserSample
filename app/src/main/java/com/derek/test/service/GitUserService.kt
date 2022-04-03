@@ -2,7 +2,7 @@ package com.derek.test.service
 
 import com.derek.test.service.respone.ResponseUser
 import com.derek.test.service.respone.ResponseUserDetails
-import io.reactivex.rxjava3.core.Single
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -16,10 +16,10 @@ interface GitUserService {
      * @param perPage 每次取最多幾筆
      */
     @GET("users")
-    fun getUsersList(
-        @Query("since")since: Int,
-        @Query("per_page")perPage: Int
-    ): Single<List<ResponseUser>>
+    suspend fun getUsersList(
+        @Query("since") since: Int,
+        @Query("per_page") perPage: Int
+    ): Response<List<ResponseUser>>
 
     /**
      * 取得指定user details
@@ -27,7 +27,7 @@ interface GitUserService {
      * @param username 指定的user
      */
     @GET("users/{username}")
-    fun getUserDetails(
-        @Path("username")username: String
-    ): Single<ResponseUserDetails>
+    suspend fun getUserDetails(
+        @Path("username") username: String
+    ): Response<ResponseUserDetails>
 }

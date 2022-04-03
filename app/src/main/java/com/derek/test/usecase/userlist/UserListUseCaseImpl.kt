@@ -1,14 +1,13 @@
 package com.derek.test.usecase.userlist
 
 import com.derek.test.repository.userlist.UserListRepository
-import io.reactivex.rxjava3.core.Single
 
 class UserListUseCaseImpl(
     private val userListRepository: UserListRepository
 ) : UserListUseCase {
 
-    override fun getFirstData(): Single<List<UserUseCaseData>> {
-        return userListRepository.getData(0)
+    override suspend fun getFirstData(): Result<List<UserUseCaseData>> {
+        return userListRepository(0)
             .map { repositoryData ->
                 repositoryData.map {
                     UserUseCaseData(
@@ -18,8 +17,8 @@ class UserListUseCaseImpl(
             }
     }
 
-    override fun fetchMore(since: Int): Single<List<UserUseCaseData>> {
-        return userListRepository.getData(since)
+    override suspend fun fetchMore(since: Int): Result<List<UserUseCaseData>> {
+        return userListRepository(since)
             .map { repositoryData ->
                 repositoryData.map {
                     UserUseCaseData(

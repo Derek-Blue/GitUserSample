@@ -6,8 +6,9 @@ import io.reactivex.rxjava3.core.Single
 class UserDetailsUseCaseImpl(
     private val userDetailsRepository: UserDetailsRepository
 ):UserDetailsUseCase {
-    override fun getData(login: String): Single<UserDetailsUseCaseData> {
-        return userDetailsRepository.getData(login)
+
+    override suspend fun invoke(login: String): Result<UserDetailsUseCaseData> {
+        return userDetailsRepository(login)
             .map {
                 UserDetailsUseCaseData(
                     it.avatar_url,

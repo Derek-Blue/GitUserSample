@@ -1,59 +1,42 @@
 package com.derek.test.mainview.detail
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.derek.test.usecase.userdetail.UserDetailsUseCase
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class UserDetailsViewModel(
     login: String,
     private val userDetailsUseCase: UserDetailsUseCase
 ) : ViewModel() {
 
-    private val _state = MutableLiveData(UserDetailsViewState())
-    private val currentState get() = _state.value!!
-    val state: LiveData<UserDetailsViewState> get() = _state
-
-    private val disposables by lazy {
-        CompositeDisposable()
-    }
+    private val _state = MutableStateFlow(UserDetailsViewState())
+    private val currentState get() = _state.value
+    val state = _state.asStateFlow()
 
     init {
-        getUserDetails(login)
-    }
+        viewModelScope.launch {
+            userDetailsUseCase(login)
+                .fold({
+                    val data = UserDetailsViewState(
+                        it.avatar_url,
+                        it.name,
+                        it.bio,
+                        it.login,
+                        it.site_admin,
+                        it.location,
+                        it.blog
+                    )
+                    _state.emit(data)
+                }, { e ->
+                    _state.update {
+                        currentState.copy(errorMessage = e.message ?: "ERROR")
+                    }
+                })
+        }
 
-    private fun getUserDetails(login: String) {
-        userDetailsUseCase.getData(login)
-            .subscribeOn(Schedulers.io())
-            .map {
-                UserDetailsViewState(
-                    it.avatar_url,
-                    it.name,
-                    it.bio,
-                    it.login,
-                    it.site_admin,
-                    it.location,
-                    it.blog
-                )
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy ({
-                _state.value = currentState.copy(
-                    errorMessage = it.message ?: "ERROR"
-                )
-            },{
-                _state.value = it
-            })
-            .addTo(disposables)
-    }
-
-    override fun onCleared() {
-        disposables.dispose()
-        super.onCleared()
     }
 }

@@ -1,7 +1,10 @@
 package com.derek.test.repository.userlist
 
 import com.derek.test.service.GitUserService
-import io.reactivex.rxjava3.core.Single
+import com.derek.test.service.checkIsSuccessful
+import com.derek.test.service.requireBody
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class UserListRepositoryImpl(
     private val gitUserService: GitUserService
@@ -12,8 +15,14 @@ class UserListRepositoryImpl(
         const val EMPTY_LOGIN = "unKnow"
     }
 
-    override fun getData(since: Int): Single<List<UserRepositoryData>> {
-        return gitUserService.getUsersList(since, DEFAULT_TAKE_COUNT)
+    override suspend fun invoke(since: Int): Result<List<UserRepositoryData>> {
+        return withContext(Dispatchers.IO) {
+            kotlin.runCatching {
+                gitUserService.getUsersList(since, DEFAULT_TAKE_COUNT)
+                    .checkIsSuccessful()
+                    .requireBody()
+            }
+        }
             .map { response ->
                 response.mapNotNull {
                     UserRepositoryData(
