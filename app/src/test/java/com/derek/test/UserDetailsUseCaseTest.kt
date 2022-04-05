@@ -2,29 +2,44 @@ package com.derek.test
 
 import com.derek.test.repository.userdetail.UserDetailsRepository
 import com.derek.test.repository.userdetail.UserDetailsRepositoryData
-import com.derek.test.usecase.userdetail.UserDetailsUseCase
-import com.derek.test.usecase.userdetail.UserDetailsUseCaseData
-import com.derek.test.usecase.userdetail.UserDetailsUseCaseImpl
+import com.derek.test.repository.userdetail.UserDetailsRepositoryImpl
+import com.derek.test.service.GitUserService
+import com.derek.test.service.respone.ResponseUserDetails
+import com.google.common.truth.Truth.assertThat
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
-import io.reactivex.rxjava3.core.Single
+import io.mockk.impl.annotations.RelaxedMockK
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import retrofit2.Response
 
+@ExperimentalCoroutinesApi
+@RunWith(RobolectricTestRunner::class)
+@Config(application = TestApplication::class)
 class UserDetailsUseCaseTest {
 
     @MockK
-    lateinit var repository: UserDetailsRepository
+    lateinit var service: GitUserService
 
-    private lateinit var useCase: UserDetailsUseCase
+    private lateinit var repository: UserDetailsRepository
+
+    @get:Rule
+    val mainCoroutineRule = MainCoroutineRule()
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        useCase = UserDetailsUseCaseImpl(repository)
+        repository = UserDetailsRepositoryImpl(service)
     }
 
     @After
@@ -33,8 +48,8 @@ class UserDetailsUseCaseTest {
     }
 
     @Test
-    fun getData() {
-        val response = UserDetailsRepositoryData(
+    fun getData() = runBlocking {
+        val response = ResponseUserDetails(
             avatar_url = "https...1?v=4",
             name = "mojombo",
             bio = "",
@@ -43,24 +58,23 @@ class UserDetailsUseCaseTest {
             location = "San Francisco",
             blog = "https://api.github.com/users/octocat"
         )
-        every { repository.getData(any()) } returns Single.just(response)
+        coEvery { service.getUserDetails(any()) } returns Response.success(response)
 
-        val expect = UserDetailsUseCaseData(
-            response.avatar_url,
-            response.name,
-            response.bio,
-            response.login,
-            response.site_admin,
-            response.location,
-            response.blog
+        val expect = UserDetailsRepositoryData(
+            response.avatar_url ?: "",
+            response.name ?: "",
+            response.bio ?: "",
+            response.login ?: "",
+            response.site_admin ?: false,
+            response.location ?: "",
+            response.blog ?: ""
         )
 
-        useCase.getData("mojombo")
-            .test()
-            .assertComplete()
-            .assertValue {
-                it == expect
-            }
-            .dispose()
+        val result = repository.invoke("mojombo")
+        assertThat(result.isSuccess).isTrue()
+        val data = result.getOrNull()
+        assertThat(data).isNotNull()
+        assertThat(expect.name).isEqualTo("mojombo")
     }
+
 }

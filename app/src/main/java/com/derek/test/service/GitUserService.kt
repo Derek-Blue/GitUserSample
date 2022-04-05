@@ -12,13 +12,13 @@ interface GitUserService {
     /**
      * 取得Users清單
      *
-     * @param since 取ID大於此參數的User
-     * @param perPage 每次取最多幾筆
+     * @param lastId 取ID大於此參數的User
+     * @param fetchCount 每次取最多幾筆
      */
     @GET("users")
     suspend fun getUsersList(
-        @Query("since") since: Int,
-        @Query("per_page") perPage: Int
+        @Query("since") lastId: Int,
+        @Query("per_page") fetchCount: Int
     ): Response<List<ResponseUser>>
 
     /**

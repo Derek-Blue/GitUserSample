@@ -10,5 +10,5 @@ interface UserListUseCase {
     /**
      * 下滑時取得更多
      */
-    suspend fun fetchMore(since: Int): Result<List<UserUseCaseData>>
+    suspend fun fetchMore(lastId: Int): Result<List<UserUseCaseData>>
 }

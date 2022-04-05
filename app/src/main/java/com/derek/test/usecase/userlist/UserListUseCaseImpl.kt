@@ -17,8 +17,8 @@ class UserListUseCaseImpl(
             }
     }
 
-    override suspend fun fetchMore(since: Int): Result<List<UserUseCaseData>> {
-        return userListRepository(since)
+    override suspend fun fetchMore(lastId: Int): Result<List<UserUseCaseData>> {
+        return userListRepository(lastId)
             .map { repositoryData ->
                 repositoryData.map {
                     UserUseCaseData(

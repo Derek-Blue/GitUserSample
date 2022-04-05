@@ -11,14 +11,14 @@ class UserListRepositoryImpl(
 ) : UserListRepository {
 
     companion object {
-        private const val DEFAULT_TAKE_COUNT = 20
+        private const val DEFAULT_FETCH_COUNT = 20
         const val EMPTY_LOGIN = "unKnow"
     }
 
-    override suspend fun invoke(since: Int): Result<List<UserRepositoryData>> {
+    override suspend fun invoke(lastId: Int): Result<List<UserRepositoryData>> {
         return withContext(Dispatchers.IO) {
             kotlin.runCatching {
-                gitUserService.getUsersList(since, DEFAULT_TAKE_COUNT)
+                gitUserService.getUsersList(lastId, DEFAULT_FETCH_COUNT)
                     .checkIsSuccessful()
                     .requireBody()
             }

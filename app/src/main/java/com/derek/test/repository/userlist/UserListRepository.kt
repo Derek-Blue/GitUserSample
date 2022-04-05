@@ -5,5 +5,5 @@ package com.derek.test.repository.userlist
  */
 interface UserListRepository {
 
-    suspend operator fun invoke(since: Int): Result<List<UserRepositoryData>>
+    suspend operator fun invoke(lastId: Int): Result<List<UserRepositoryData>>
 }

@@ -1,219 +1,123 @@
 package com.derek.test
 
 import com.derek.test.repository.userlist.UserListRepository
-import com.derek.test.repository.userlist.UserRepositoryData
-import com.derek.test.usecase.userlist.UserListUseCase
-import com.derek.test.usecase.userlist.UserListUseCaseImpl
+import com.derek.test.repository.userlist.UserListRepositoryImpl
+import com.derek.test.service.GitUserService
+import com.derek.test.service.respone.ResponseUser
+import com.google.common.truth.Truth.assertThat
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.TestScheduler
+import io.mockk.coEvery
+import io.mockk.impl.annotations.RelaxedMockK
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import java.util.concurrent.TimeUnit
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import retrofit2.Response
 
+@ExperimentalCoroutinesApi
+@RunWith(RobolectricTestRunner::class)
+@Config(application = TestApplication::class)
 class UserListUseCaeTest {
 
-    @MockK
-    lateinit var repository: UserListRepository
+    @RelaxedMockK
+    lateinit var service: GitUserService
 
-    private lateinit var useCase: UserListUseCase
+    private lateinit var repository: UserListRepository
 
-    private lateinit var testScheduler: TestScheduler
+    @get:Rule
+    val mainCoroutineRule = MainCoroutineRule()
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        useCase = UserListUseCaseImpl(repository)
-        testScheduler = TestScheduler()
+        repository = UserListRepositoryImpl(service)
     }
 
     @After
     fun tearDown() {
         clearAllMocks()
-        testScheduler.shutdown()
     }
 
     @Test
     fun getFirstData() {
-        setUpFirstDataResponse()
-
-        val testObserver = useCase.getFirstData()
-            .subscribeOn(testScheduler)
-            .test()
-            .assertNoErrors()
-            .assertValueCount(0) // "time" hasn't started so no value expected
-
-        // 500 millis later
-        testScheduler.advanceTimeBy(500, TimeUnit.MILLISECONDS)
-
-        testObserver.assertValueCount(1)
-            .assertValueAt(0) {
-                it.size == 20
-            }
-            .assertValueAt(0) {
-                it == it.toSet().toList()
-            }
-            .dispose()
-    }
-
-    @Test
-    fun fetchData() {
-        setUpFetchMoreDataResponse()
-
-        val testObserver = useCase.fetchMore(20)
-            .subscribeOn(testScheduler)
-            .test()
-            .assertNoErrors()
-            .assertValueCount(0) // "time" hasn't started so no value expected
-
-        // 500 millis later
-        testScheduler.advanceTimeBy(500, TimeUnit.MILLISECONDS)
-
-        testObserver.assertValueCount(1)
-            .assertValueAt(0) {
-                it.size == 20
-            }
-            .assertValueAt(0) {
-                it == it.toSet().toList()
-            }
-            .dispose()
+        runBlocking {
+            setUpFirstDataResponse()
+            val result = repository.invoke(0)
+            assertThat(result.isSuccess).isTrue()
+            val data = result.getOrThrow()
+            assertThat(data).isNotEmpty()
+        }
     }
 
     private fun setUpFirstDataResponse() {
-        every { repository.getData(any()) } returns
-                Single.just(
+        coEvery { service.getUsersList(any(), any()) } returns
+                Response.success(
                     listOf(
-                        UserRepositoryData(
+                        ResponseUser(
                             1, "mojombo", "https...1?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             2, "defunkt", "https...2?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             3, "pjhyett", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             4, "aaa", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             5, "bbb", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             6, "ccc", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             7, "ddd", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             8, "eee", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             9, "fff", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             10, "ggg", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             11, "hhh", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             12, "iii", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             13, "jjj", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             14, "kkk", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             15, "mmm", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             16, "nnn", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             17, "ooo", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             18, "ppp", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             19, "qqq", "https...3?v=4", false
                         ),
-                        UserRepositoryData(
+                        ResponseUser(
                             20, "rrr", "https...3?v=4", false
-                        )
-                    )
-                )
-    }
-
-    private fun setUpFetchMoreDataResponse() {
-        every { repository.getData(any()) } returns
-                Single.just(
-                    listOf(
-                        UserRepositoryData(
-                            21, "mojombo", "https...1?v=4", false
-                        ),
-                        UserRepositoryData(
-                            22, "defunkt", "https...2?v=4", false
-                        ),
-                        UserRepositoryData(
-                            23, "pjhyett", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            24, "aaa", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            25, "bbb", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            26, "ccc", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            27, "ddd", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            28, "eee", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            29, "fff", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            30, "ggg", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            31, "hhh", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            32, "iii", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            33, "jjj", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            34, "kkk", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            35, "mmm", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            36, "nnn", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            37, "ooo", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            38, "ppp", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            39, "qqq", "https...3?v=4", false
-                        ),
-                        UserRepositoryData(
-                            40, "rrr", "https...3?v=4", false
                         )
                     )
                 )
